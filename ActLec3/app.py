@@ -45,7 +45,7 @@ def crear_usuario():
     return jsonify({"mensaje": "Usuario creado exitosamente","usuario": nuevo_usuario
     }), 201
 
-@app.route("/usuarios", methods=["POST"])
+@app.route("/usuarios", methods=["GET"])
 def obtener_usuarios():
     return jsonify(usuarios), 200
 
