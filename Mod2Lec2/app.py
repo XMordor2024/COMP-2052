@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, EmailField
 from wtforms.validators import DataRequired, Length
 
 app = Flask(__name__)
@@ -18,6 +18,10 @@ class LoginForm(FlaskForm):
     
     submit = SubmitField("Login",  # definir el botón de submit
         render_kw={"class": "btn btn-primary"}) # aplicar clases de CSS
+    
+    email = EmailField("Email", # definir input box para el email
+        validators=[DataRequired(),],
+        render_kw={"placeholder": "Your email ejemplo@gmail.com "})
 
 
 @app.route("/", methods=["GET"])
