@@ -1,4 +1,4 @@
-POST http://127.0.0.1:5000/crear_usuarios
+POST http://127.0.0.1:5000/usuarios
 Content-Type: application/json
 
 {   
