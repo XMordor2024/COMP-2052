@@ -2,7 +2,7 @@ POST http://127.0.0.1:5000/crear_usuario
 Content-Type: application/json
 
 {   
-    "nombre": "Juan Perez",
-    "correo": "juan@ejemplo.com",
-    "fecha_registro": "20-04-2025"
+    "nombre": "Carlos Rios",
+    "correo": "carlos@super.com",
+    "fecha_registro": "10-08-2025"
 }

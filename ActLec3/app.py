@@ -57,7 +57,7 @@ def crear_usuario():
 
 @app.route("/usuarios", methods=["GET"])
 def obtener_usuarios():
-    return jsonify(usuarios), 200
+    return jsonify({"usuarios":usuarios}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
