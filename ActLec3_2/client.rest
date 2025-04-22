@@ -3,6 +3,5 @@ Content-Type: application/json
 
 {   
     "nombre": "Carlos Rios",
-    "correo": "carlos@super.com",
-    "Producto Comprado": "103"
+    "correo": "carlos@super.com"
 }
