@@ -4,5 +4,5 @@ Content-Type: application/json
 {   
     "nombre": "Carlos Rios",
     "correo": "carlos@super.com",
-    "fecha_registro": "10-08-2025"
+    "Producto Comprado": "103"
 }
