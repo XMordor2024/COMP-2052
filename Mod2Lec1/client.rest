@@ -2,7 +2,7 @@ Get http://127.0.0.1:5000/info
 Accept: application/json
 
 
-POST http://localhost:5000/mensaje
+POST http://127.0.0.1:5000/mensaje
 Content-Type: application/json
 
 {

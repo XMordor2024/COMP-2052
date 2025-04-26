@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Juegos{% endblock %}
+
+{% block content %}
+<h2>Listado de juegos</h2>
+<table>
+    <tr><th>ID</th><th>Nombre</th><th>Precio</th></tr>
+    {% for juego in juegos %}
+    <tr>
+        <td>{{ juego.id }}</td>
+        <td>{{ juego.nombre }}</td>
+        <td>${{ juego.precio }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
