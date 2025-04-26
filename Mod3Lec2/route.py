@@ -1,7 +1,11 @@
-from ast import main
-from flask import Flask, jsonify
-from flask_login import current_user, login_required
+from flask import Blueprint, jsonify
+from flask_login import login_required, current_user
+from flask_principal import Permission, RoleNeed
 
+main = Blueprint('main', __name__)
+
+admin_permission = Permission(RoleNeed('admin'))
+user_permission = Permission(RoleNeed('user'))
 
 @main.route('/')
 def index():
