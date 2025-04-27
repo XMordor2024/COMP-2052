@@ -1,0 +1,68 @@
+### Login como admin_user
+POST http://127.0.0.1:5000/login
+Content-Type: application/json
+
+{
+  "username": "admin_user",
+  "password": "adminpass"
+}
+
+### Acceso a área de admin
+GET http://127.0.0.1:5000/admin
+
+### Acceso a área de edición
+GET http://127.0.0.1:5000/edit
+
+### Acceso a dashboard
+GET http://127.0.0.1:5000/dashboard
+
+### Logout
+POST http://127.0.0.1:5000/logout
+
+
+### Login como editor_user
+POST http://127.0.0.1:5000/login
+Content-Type: application/json
+
+{
+  "username": "editor_user",
+  "password": "editorpass"
+}
+
+### Acceso a área de admin
+GET http://127.0.0.1:5000/admin
+
+### Acceso a área de edición
+GET http://127.0.0.1:5000/edit
+
+### Acceso a dashboard
+GET http://127.0.0.1:5000/dashboard
+
+### Logout
+POST http://127.0.0.1:5000/logout
+
+
+### Login como viewer_user
+POST http://127.0.0.1:5000/login
+Content-Type: application/json
+
+{
+  "username": "viewer_user",
+  "password": "viewerpass"
+}
+
+### Acceso a área de admin
+GET http://127.0.0.1:5000/admin
+
+### Acceso a área de edición
+GET http://127.0.0.1:5000/edit
+
+### Acceso a dashboard
+GET http://127.0.0.1:5000/dashboard
+
+### Logout
+POST http://127.0.0.1:5000/logout
+
+
+### Acceso a área pública (sin login)
+GET http://127.0.0.1:5000/public
