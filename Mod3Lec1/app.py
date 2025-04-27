@@ -14,10 +14,14 @@ class User(UserMixin):
         self.id = id
         
 
-users = {'usuarios': {'password': 'contraseña'}, 'usuario2': {'password': 'contraseña'}}
+users = {'juancolumna': {'password': 'pila'}, 'mariapy': {'password': 'pypila'}}
 
 
 @login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+
+@app.route('/')
 def home():
     return render_template('index.html')
 
