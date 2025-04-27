@@ -35,7 +35,7 @@ def login():
         else:
             return 'Credenciales inválidas', 401
         
-    return render_template('log.html')
+    return render_template('login.html')
 
 @app.route('/dashboard')
 @login_required
