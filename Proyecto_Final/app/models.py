@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Modelo de roles (Admin, Professor, Student, etc.)
+# Modelo de roles (Admin, Support Agent, User, etc.)
 class Role(db.Model):
     __tablename__ = 'role'
     
@@ -27,8 +27,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)  # Asegura suficiente espacio para el hash
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
 
-    # Relación con cursos (si es profesor)
-    cursos = db.relationship('Curso', backref='profesor', lazy=True)
+    # Relación con tickets creados por el usuario
+    tickets_created = db.relationship('Ticket', backref='created_by', lazy=True)
 
     def set_password(self, password: str):
         """
@@ -42,11 +42,27 @@ class User(UserMixin, db.Model):
         """
         return check_password_hash(self.password_hash, password)
 
-# Modelo de curso asociado a un profesor
-class Curso(db.Model):
-    __tablename__ = 'curso'
+# Modelo de categorías de tickets (Bug, Feature Request, Support, etc.)
+class TicketCategory(db.Model):
+    __tablename__ = 'ticket_category'
 
     id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(100), nullable=False)
-    descripcion = db.Column(db.Text, nullable=False)
-    profesor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(64), unique=True, nullable=False)
+
+    # Relación inversa opcional (para ver tickets asociados a la categoría)
+    tickets = db.relationship('Ticket', backref='category', lazy=True)
+
+# Modelo de tickets
+class Ticket(db.Model):
+    __tablename__ = 'ticket'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), default='Open', nullable=False)  # Ejemplo: Open, In Progress, Closed
+    created_at = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now(), nullable=False)
+
+    # Relaciones
+    category_id = db.Column(db.Integer, db.ForeignKey('ticket_category.id'), nullable=False)
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from app.forms import LoginForm, RegisterForm
-from app.models import db, User, Role
-from flask_login import login_user, logout_user
+from app.models import db, User, Role, Ticket
+from flask_login import login_user, logout_user, current_user, login_required
 
 # Blueprint de autenticación: gestiona login, registro y logout
 auth = Blueprint('auth', __name__)
@@ -23,7 +23,7 @@ def login():
             return redirect(url_for('main.dashboard'))
 
         # Mensaje si las credenciales no son válidas
-        flash('Invalid credentials')  # 🔁 Traducido
+        flash('Invalid credentials')
 
     # Renderiza el formulario de login
     return render_template('login.html', form=form)
@@ -31,14 +31,14 @@ def login():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     """
-    Registra un nuevo usuario y lo asocia por defecto al rol "Student".
+    Registra un nuevo usuario y lo asocia por defecto al rol "User".
     """    
     form = RegisterForm()
     
     # Procesa el formulario si fue enviado correctamente
     if form.validate_on_submit():
-        # Buscar el rol por nombre seleccionado
-        role = Role.query.filter_by(name=form.role.data).first() # Puedes renombrar esto a 'Student' si cambias toda la app a inglés
+        # Buscar el rol por nombre (por defecto "User")
+        role = Role.query.filter_by(name='User').first()
 
         # Crea el usuario con datos del formulario
         user = User(
@@ -66,3 +66,13 @@ def logout():
     """
     logout_user()
     return redirect(url_for('auth.login'))
+
+@auth.route('/my_tickets')
+@login_required
+def my_tickets():
+    """
+    Muestra los tickets creados por el usuario actual.
+    """
+    # Obtiene los tickets creados por el usuario actual
+    tickets = Ticket.query.filter_by(created_by=current_user).all()
+    return render_template('my_tickets.html', tickets=tickets)

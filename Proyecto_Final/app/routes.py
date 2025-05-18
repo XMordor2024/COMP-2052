@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
-from app.forms import CursoForm, ChangePasswordForm
-from app.models import db, Curso, User
+from app.forms import TicketForm, UpdateTicketStatusForm
+from app.models import db, Ticket, TicketCategory, User
 
-# Blueprint principal que maneja el dashboard, gestión de cursos y cambio de contraseña
+# Blueprint principal que maneja el dashboard y la gestión de tickets
 main = Blueprint('main', __name__)
 
 @main.route('/')
@@ -13,112 +13,104 @@ def index():
     """
     return render_template('index.html')
 
-@main.route('/cambiar-password', methods=['GET', 'POST'])
-@login_required
-def cambiar_password():
-    """
-    Permite al usuario autenticado cambiar su contraseña.
-    """
-    form = ChangePasswordForm()
-
-    if form.validate_on_submit():
-        # Verifica que la contraseña actual sea correcta
-        if not current_user.check_password(form.old_password.data):
-            flash('Current password is incorrect.')  # 🔁 Traducido
-            return render_template('cambiar_password.html', form=form)
-
-        # Actualiza la contraseña y guarda
-        current_user.set_password(form.new_password.data)
-        db.session.commit()
-        flash('✅ Password updated successfully.')  # 🔁 Traducido
-        return redirect(url_for('main.dashboard'))
-
-    return render_template('cambiar_password.html', form=form)
-
 @main.route('/dashboard')
 @login_required
 def dashboard():
     """
-    Panel principal del usuario. Muestra los cursos si no es estudiante.
+    Panel principal del usuario. Muestra los tickets creados por el usuario.
     """
-    if current_user.role.name == 'Student': # Change this for your project
-        cursos = Curso.query.all()
+    if current_user.role.name == 'Admin':
+        tickets = Ticket.query.all()
     else:
-        cursos = Curso.query.filter_by(profesor_id=current_user.id).all()
+        tickets = Ticket.query.filter_by(created_by=current_user).all()
 
-    return render_template('dashboard.html', cursos=cursos)
+    return render_template('dashboard.html', tickets=tickets)
 
-@main.route('/cursos', methods=['GET', 'POST'])
+@main.route('/tickets', methods=['GET', 'POST'])
 @login_required
-def cursos():
+def crear_ticket():
     """
-    Permite crear un nuevo curso. Solo disponible para profesores o admins.
+    Permite crear un nuevo ticket.
     """
-    form = CursoForm()
+    form = TicketForm()
+    form.category.choices = [(c.id, c.name) for c in TicketCategory.query.all()]
+
     if form.validate_on_submit():
-        curso = Curso(
-            titulo=form.titulo.data,
-            descripcion=form.descripcion.data,
-            profesor_id=current_user.id
+        category = TicketCategory.query.get(form.category.data)
+        ticket = Ticket(
+            title=form.title.data,
+            description=form.description.data,
+            category=category,
+            created_by=current_user
         )
-        db.session.add(curso)
+        db.session.add(ticket)
         db.session.commit()
-        flash("Course created successfully.")  # 🔁 Traducido
+        flash("Ticket created successfully.")
         return redirect(url_for('main.dashboard'))
 
-    return render_template('curso_form.html', form=form)
+    return render_template('ticket_form.html', form=form)
 
-@main.route('/cursos/<int:id>/editar', methods=['GET', 'POST'])
+@main.route('/tickets/<int:id>/editar', methods=['GET', 'POST'])
 @login_required
-def editar_curso(id):
+def editar_ticket(id):
     """
-    Permite editar un curso existente. Solo si es admin o el profesor dueño.
+    Permite editar un ticket existente. Solo el creador o un admin puede editarlo.
     """
-    curso = Curso.query.get_or_404(id)
+    ticket = Ticket.query.get_or_404(id)
 
     # Validación de permisos
-    if current_user.role.name not in ['Admin', 'Professor'] or (
-        curso.profesor_id != current_user.id and current_user.role.name != 'Admin'):
-        flash('You do not have permission to edit this course.')  # 🔁 Traducido
+    if current_user != ticket.created_by and current_user.role.name != 'Admin':
+        flash('You do not have permission to edit this ticket.')
         return redirect(url_for('main.dashboard'))
 
-    form = CursoForm(obj=curso)
+    form = TicketForm(obj=ticket)
+    form.category.choices = [(c.id, c.name) for c in TicketCategory.query.all()]
 
     if form.validate_on_submit():
-        curso.titulo = form.titulo.data
-        curso.descripcion = form.descripcion.data
+        ticket.title = form.title.data
+        ticket.description = form.description.data
+        ticket.category = TicketCategory.query.get(form.category.data)
         db.session.commit()
-        flash("Course updated successfully.")  # 🔁 Traducido
+        flash("Ticket updated successfully.")
         return redirect(url_for('main.dashboard'))
 
-    return render_template('curso_form.html', form=form, editar=True)
+    return render_template('ticket_form.html', form=form, editar=True)
 
-@main.route('/cursos/<int:id>/eliminar', methods=['POST'])
+@main.route('/tickets/<int:id>/eliminar', methods=['POST'])
 @login_required
-def eliminar_curso(id):
+def eliminar_ticket(id):
     """
-    Elimina un curso si el usuario es admin o su profesor creador.
+    Elimina un ticket si el usuario es admin o su creador.
     """
-    curso = Curso.query.get_or_404(id)
+    ticket = Ticket.query.get_or_404(id)
 
-    if current_user.role.name not in ['Admin', 'Professor'] or (
-        curso.profesor_id != current_user.id and current_user.role.name != 'Admin'):
-        flash('You do not have permission to delete this course.')  # 🔁 Traducido
+    if current_user != ticket.created_by and current_user.role.name != 'Admin':
+        flash('You do not have permission to delete this ticket.')
         return redirect(url_for('main.dashboard'))
 
-    db.session.delete(curso)
+    db.session.delete(ticket)
     db.session.commit()
-    flash("Course deleted successfully.")  # 🔁 Traducido
+    flash("Ticket deleted successfully.")
     return redirect(url_for('main.dashboard'))
 
-@main.route('/usuarios')
+@main.route('/tickets/<int:id>/actualizar_estado', methods=['GET', 'POST'])
 @login_required
-def listar_usuarios():
-    if current_user.role.name != 'Admin':
-        flash("You do not have permission to view this page.")
+def actualizar_estado_ticket(id):
+    """
+    Permite actualizar el estado de un ticket. Solo admins o el creador pueden hacerlo.
+    """
+    ticket = Ticket.query.get_or_404(id)
+
+    if current_user != ticket.created_by and current_user.role.name != 'Admin':
+        flash('You do not have permission to update this ticket.')
         return redirect(url_for('main.dashboard'))
 
-    # Obtener instancias completas de usuarios con sus roles (no usar .add_columns)
-    usuarios = User.query.join(User.role).all()
+    form = UpdateTicketStatusForm(obj=ticket)
 
-    return render_template('usuarios.html', usuarios=usuarios)
+    if form.validate_on_submit():
+        ticket.status = form.status.data
+        db.session.commit()
+        flash("Ticket status updated successfully.")
+        return redirect(url_for('main.dashboard'))
+
+    return render_template('update_ticket_status.html', form=form, ticket=ticket)

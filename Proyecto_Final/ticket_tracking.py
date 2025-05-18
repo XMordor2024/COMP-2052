@@ -1,6 +1,7 @@
 from app import create_app
 
 # Crea la instancia de la aplicación Flask utilizando la factoría
+# Esta aplicación está diseñada para el seguimiento de tickets
 app = create_app()
 
 # Punto de entrada de la aplicación

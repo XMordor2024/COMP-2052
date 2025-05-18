@@ -1,24 +1,37 @@
-{% extends "layout.html" %} {% block title %}{{ editar and "Edit Course" or "New
-Course" }}{% endblock %} {% block content %}
-<h2 class="mb-4">{{ editar and "Edit Course" or "New Course" }}</h2>
+<!-- filepath: c:\Users\efigueroa0880\Downloads\COMP 2052\Proyecto_Final\templates\tickets_form.html -->
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ editar and "Edit Ticket" or "New Ticket" }}
+{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ editar and "Edit Ticket" or "New Ticket" }}</h2>
 
 <form method="POST" novalidate>
   {{ form.hidden_tag() }}
 
-  <!-- Course Title -->
+  <!-- Ticket Title -->
   <div class="mb-3">
-    {{ form.titulo.label(class="form-label") }} {{
-    form.titulo(class="form-control", placeholder="Enter course title") }}
+    {{ form.title.label(class="form-label") }}
+    {{ form.title(class="form-control", placeholder="Enter ticket title") }}
   </div>
 
-  <!-- Course Description -->
+  <!-- Ticket Description -->
   <div class="mb-3">
-    {{ form.descripcion.label(class="form-label") }} {{
-    form.descripcion(class="form-control", placeholder="Enter course
-    description") }}
+    {{ form.description.label(class="form-label") }}
+    {{ form.description(class="form-control", placeholder="Enter ticket description") }}
+  </div>
+
+  <!-- Ticket Category -->
+  <div class="mb-3">
+    {{ form.category.label(class="form-label") }}
+    {{ form.category(class="form-select") }}
   </div>
 
   <!-- Submit Button -->
-  <div class="mb-3">{{ form.submit(class="btn btn-primary") }}</div>
+  <div class="mb-3">
+    {{ form.submit(class="btn btn-primary") }}
+  </div>
 </form>
 {% endblock %}

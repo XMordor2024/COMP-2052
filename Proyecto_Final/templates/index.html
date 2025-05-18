@@ -1,11 +1,15 @@
-{% extends "layout.html" %} {% block title %}Home{% endblock %} {% block content
-    %}
-    <div class="text-center">
-      <h1 class="mt-5">Welcome to the Course Manager</h1>
-      {% if current_user.id %}
-      <p class="lead text-muted">Select the Dashboard option to view the data.</p>
-      {% else %}
-      <p class="lead text-body-secondary">Please log in or register to continue.</p>
-      {% endif %}
-    </div>
-    {% endblock %}
+<!-- filepath: c:\Users\efigueroa0880\Downloads\COMP 2052\Proyecto_Final\templates\index.html -->
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="text-center">
+  <h1 class="mt-5">Welcome to the Ticket Tracker</h1>
+  {% if current_user.id %}
+  <p class="lead text-muted">Select the Dashboard option to manage your tickets.</p>
+  {% else %}
+  <p class="lead text-body-secondary">Please log in or register to start tracking tickets.</p>
+  {% endif %}
+</div>
+{% endblock %}

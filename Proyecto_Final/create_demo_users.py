@@ -1,57 +1,60 @@
 from app import create_app, db
-from app.models import Role, User
-from werkzeug.security import generate_password_hash
+from app.models import TicketCategory, Ticket, User
 
 app = create_app()
 
 with app.app_context():
-    # Asegurarse de que los roles existen
-    roles = ['Admin', 'Professor', 'Student']
-    for role_name in roles:
-        existing_role = Role.query.filter_by(name=role_name).first()
-        if not existing_role:
-            new_role = Role(name=role_name)
-            db.session.add(new_role)
-            print(f'✅ Rol "{role_name}" creado.')
+    # Asegurarse de que las categorías de tickets existen
+    categories = ['Bug', 'Feature Request', 'Support']
+    for category_name in categories:
+        existing_category = TicketCategory.query.filter_by(name=category_name).first()
+        if not existing_category:
+            new_category = TicketCategory(name=category_name)
+            db.session.add(new_category)
+            print(f'✅ Categoría "{category_name}" creada.')
 
     db.session.commit()
 
-    # Diccionario con usuarios a insertar
-    users_data = [
+    # Diccionario con tickets a insertar
+    tickets_data = [
         {
-            "username": "Administrator",
-            "email": "admin@example.com",
-            "password": "admin123",
-            "role_name": "Admin"
+            "title": "Error en la página de inicio",
+            "description": "La página de inicio no carga correctamente en dispositivos móviles.",
+            "category_name": "Bug",
+            "created_by_email": "admin@example.com"
         },
         {
-            "username": "John Doe",
-            "email": "prof@example.com",
-            "password": "prof123",
-            "role_name": "Professor"
+            "title": "Agregar modo oscuro",
+            "description": "Sería útil tener un modo oscuro para la aplicación.",
+            "category_name": "Feature Request",
+            "created_by_email": "prof@example.com"
         },
         {
-            "username": "Steve Jobs",
-            "email": "student@example.com",
-            "password": "student123",
-            "role_name": "Student"
+            "title": "Problema con el inicio de sesión",
+            "description": "No puedo iniciar sesión con mi cuenta registrada.",
+            "category_name": "Support",
+            "created_by_email": "student@example.com"
         }
     ]
 
-    for user_info in users_data:
-        existing_user = User.query.filter_by(email=user_info['email']).first()
-        if not existing_user:
-            role = Role.query.filter_by(name=user_info['role_name']).first()
-            user = User(
-                username=user_info['username'],
-                email=user_info['email'],
-                role=role
-            )
-            user.set_password(user_info['password'])  # Genera hash seguro
-            db.session.add(user)
-            print(f'✅ Usuario "{user.username}" creado con rol "{role.name}".')
+    for ticket_info in tickets_data:
+        existing_ticket = Ticket.query.filter_by(title=ticket_info['title']).first()
+        if not existing_ticket:
+            category = TicketCategory.query.filter_by(name=ticket_info['category_name']).first()
+            created_by = User.query.filter_by(email=ticket_info['created_by_email']).first()
+            if category and created_by:
+                ticket = Ticket(
+                    title=ticket_info['title'],
+                    description=ticket_info['description'],
+                    category=category,
+                    created_by=created_by
+                )
+                db.session.add(ticket)
+                print(f'✅ Ticket "{ticket.title}" creado en la categoría "{category.name}".')
+            else:
+                print(f'⚠️ No se pudo crear el ticket "{ticket_info["title"]}". Verifica la categoría o el usuario.')
         else:
-            print(f'ℹ️ El usuario con email {user_info["email"]} ya existe.')
+            print(f'ℹ️ El ticket con título "{ticket_info["title"]}" ya existe.')
 
     db.session.commit()
-    print("✅ Todos los usuarios fueron procesados correctamente.")
+    print("✅ Todos los tickets fueron procesados correctamente.")

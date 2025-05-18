@@ -17,7 +17,7 @@ class RegisterForm(FlaskForm):
     
     role = SelectField(
         'Role',
-        choices=[('Student', 'Student'), ('Professor', 'Professor')],
+        choices=[('User', 'User'), ('Support Agent', 'Support Agent'), ('Admin', 'Admin')],
         validators=[DataRequired()]
     )
 
@@ -30,8 +30,22 @@ class ChangePasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm new password', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Update Password')
 
-# Formulario para crear o editar un curso
-class CursoForm(FlaskForm):
-    titulo = StringField('Course title', validators=[DataRequired()])
-    descripcion = TextAreaField('Description', validators=[DataRequired()])
-    submit = SubmitField('Save')
+# Formulario para crear o editar un ticket
+class TicketForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    category = SelectField(
+        'Category',
+        choices=[('Bug', 'Bug'), ('Feature Request', 'Feature Request'), ('Support', 'Support')],
+        validators=[DataRequired()]
+    )
+    submit = SubmitField('Submit Ticket')
+
+# Formulario para actualizar el estado de un ticket
+class UpdateTicketStatusForm(FlaskForm):
+    status = SelectField(
+        'Status',
+        choices=[('Open', 'Open'), ('In Progress', 'In Progress'), ('Closed', 'Closed')],
+        validators=[DataRequired()]
+    )
+    submit = SubmitField('Update Status')
