@@ -1,58 +1,52 @@
-<!-- filepath: c:\Users\efigueroa0880\Downloads\COMP 2052\Proyecto_Final\templates\register.html -->
-{% extends "layout.html" %}
-
-{% block title %}Register{% endblock %}
-
-{% block content %}
-<form method="POST" novalidate>
-  <div class="d-flex justify-content-center align-items-center">
-    <div class="card col-11 col-sm-10 col-md-8 col-lg-6 mt-3">
-      <div class="card-header">
-        <strong>Register for Ticket Tracker</strong>
-      </div>
-      <div class="card-body">
-        {{ form.hidden_tag() }}
-
-        <!-- Username field -->
-        <div class="mb-3">
-          {{ form.username.label(class="form-label") }}
-          {{ form.username(class="form-control", placeholder="Enter your username") }}
+{% extends "layout.html" %} {% block title %}Register{% endblock %} {% block
+  content %}
+  
+  <form method="POST" novalidate>
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="card col-11 col-sm-10 col-md-8 col-lg-6 mt-3">
+        <div class="card-header">
+          <strong>User Registration</strong>
         </div>
-
-        <!-- Email field -->
-        <div class="mb-3">
-          {{ form.email.label(class="form-label") }}
-          {{ form.email(class="form-control", placeholder="Enter your email") }}
+        <div class="card-body">
+          {{ form.hidden_tag() }}
+  
+          <div class="mb-3">
+            {{ form.username.label(class="form-label") }} {{
+            form.username(class="form-control", placeholder="Enter your username")
+            }}
+          </div>
+  
+          <div class="mb-3">
+            {{ form.email.label(class="form-label") }} {{
+            form.email(class="form-control", placeholder="Enter your email") }}
+          </div>
+  
+          <div class="mb-3">
+            {{ form.password.label(class="form-label") }} {{
+            form.password(class="form-control", placeholder="Enter your password")
+            }}
+          </div>
+  
+          <div class="mb-3">
+            {{ form.confirm_password.label(class="form-label") }} {{
+            form.confirm_password(class="form-control", placeholder="Confirm your
+            password") }}
+          </div>
+  
+          <!-- New: Select Role -->
+          <div class="mb-3">
+            {{ form.role.label(class="form-label") }} {{
+            form.role(class="form-select") }}
+          </div>
         </div>
-
-        <!-- Password field -->
-        <div class="mb-3">
-          {{ form.password.label(class="form-label") }}
-          {{ form.password(class="form-control", placeholder="Enter your password") }}
-        </div>
-
-        <!-- Confirm password field -->
-        <div class="mb-3">
-          {{ form.confirm_password.label(class="form-label") }}
-          {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
-        </div>
-
-        <!-- Role selection -->
-        <div class="mb-3">
-          {{ form.role.label(class="form-label") }}
-          {{ form.role(class="form-select") }}
-        </div>
-      </div>
-
-      <!-- Submit button -->
-      <div class="card-footer">
-        {{ form.submit(class="btn btn-success") }}
+        <div class="card-footer">{{ form.submit(class="btn btn-success") }}</div>
       </div>
     </div>
-  </div>
-  <p class="pt-2 text-center">
-    Already have an account?
-    <a href="{{ url_for('auth.login') }}">Log in here</a>.
-  </p>
-</form>
-{% endblock %}
+    <p class="pt-2 text-center">
+      Already have an account?
+      <a href="{{ url_for('auth.login') }}">Log in here</a>.
+    </p>
+  </form>
+  
+  {% endblock %}
+  
