@@ -1,3 +1,4 @@
+-- Active: 1747757391291@@127.0.0.1@3306
 DROP DATABASE IF EXISTS seguimiento_tickets;
 CREATE DATABASE seguimiento_tickets CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE seguimiento_tickets;
