@@ -37,7 +37,7 @@ def register():
     
     # Procesa el formulario si fue enviado correctamente
     if form.validate_on_submit():
-        # Buscar el rol por nombre (por defecto "User")
+        # Buscar el rol por nombre (por default "User")
         role = Role.query.filter_by(name='User').first()
 
         # Crea el usuario con datos del formulario
