@@ -1,6 +1,6 @@
 ### Crear un nuevo ticket (POST)
 
-POST http://localhost:5000/tickets 
+POST http://127.0.0.1:5000/tickets 
 Content-Type: application/json
 
 {

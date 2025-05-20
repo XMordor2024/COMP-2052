@@ -23,7 +23,7 @@ def login():
             return redirect(url_for('main.dashboard'))
 
         # Mensaje si las credenciales no son válidas
-        flash('Invalid credentials')
+        flash('Invalid credentials')    
 
     # Renderiza el formulario de login
     return render_template('login.html', form=form)
