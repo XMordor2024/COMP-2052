@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from app.forms import LoginForm, RegisterForm
-from app.models import db, User, Role, Ticket
-from flask_login import login_user, logout_user, current_user, login_required
+from app.models import db, User, Role
+from flask_login import login_user, logout_user, login_required
 
 # Blueprint de autenticación: gestiona login, registro y logout
 auth = Blueprint('auth', __name__)
@@ -20,10 +20,11 @@ def login():
         # Verifica si el usuario existe y la contraseña es válida
         if user and user.check_password(form.password.data):
             login_user(user)
-            return redirect(url_for('main.dashboard'))
+            flash('Inicio de sesión exitoso.', 'success')
+            return redirect(url_for('ticket.dashboard'))  # Redirige al dashboard de tickets
 
         # Mensaje si las credenciales no son válidas
-        flash('Invalid credentials')    
+        flash('Credenciales inválidas', 'danger')    
 
     # Renderiza el formulario de login
     return render_template('login.html', form=form)
@@ -37,45 +38,34 @@ def register():
     
     # Procesa el formulario si fue enviado correctamente
     if form.validate_on_submit():
-        # Buscar el rol por nombre (por default "User")
-        role = Role.query.filter_by(name='User').first()
-        if not role:
-            flash('Role seleccionado es inválido.')
+        # Buscar el rol seleccionado
+            role = Role.query.filter_by(name=form.role.data).first()
+            if not role:
+                flash('Rol inválido seleccionado', 'danger')
             return redirect(url_for('auth.register'))
 
         # Crea el usuario con datos del formulario
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            role=role
+    user = User(
+        username=form.username.data,
+        email=form.email.data,
+        role=role
         )
-        user.set_password(form.password.data)
+    user.set_password(form.password.data)
 
-        # Guarda en la base de datos
-        db.session.add(user)
-        db.session.commit()
+    # Guarda en la base de datos
+    db.session.add(user)
+    db.session.commit()
 
-        # Muestra mensaje de éxito
-        flash('User registered successfully.')
-        return redirect(url_for('auth.login'))
+    # Muestra mensaje de éxito
+    flash('User registered successfully.')
+    return redirect(url_for('auth.login'))
     
     # Renderiza el formulario de registro
     return render_template('register.html', form=form)
 
 @auth.route('/logout')
-def logout():
-    """
-    Cierra sesión del usuario actual y redirige al login.
-    """
-    logout_user()
-    return redirect(url_for('auth.login'))
-
-@auth.route('/my_tickets')
 @login_required
-def my_tickets():
-    """
-    Muestra los tickets creados por el usuario actual.
-    """
-    # Obtiene los tickets creados por el usuario actual
-    tickets = Ticket.query.filter_by(created_by=current_user).all()
-    return render_template('my_tickets.html', tickets=tickets)
+def logout():
+    logout_user()
+    flash('Sesión cerrada correctamente.', 'info')
+    return redirect(url_for('auth.login'))
