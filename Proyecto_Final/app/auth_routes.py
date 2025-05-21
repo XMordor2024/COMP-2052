@@ -39,6 +39,9 @@ def register():
     if form.validate_on_submit():
         # Buscar el rol por nombre (por default "User")
         role = Role.query.filter_by(name='User').first()
+        if not role:
+            flash('Role seleccionado es inválido.')
+            return redirect(url_for('auth.register'))
 
         # Crea el usuario con datos del formulario
         user = User(
