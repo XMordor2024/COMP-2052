@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">List of Tickets</h3>
+
+<table class="table table-striped table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Category</th>
+      <th>Status</th>
+      <th>Created By</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ticket in tickets %}
+    <tr>
+      <td>{{ ticket.title }}</td>
+      <td>{{ ticket.description }}</td>
+      <td>{{ ticket.category.name }}</td>
+      <td>{{ ticket.status }}</td>
+      <td>{{ ticket.created_by.username }}</td>
+      <td class="text-center">
+        {% if current_user.role.name == 'Admin' or ticket.created_by.id == current_user.id %}
+        <a href="{{ url_for('main.editar_ticket', id=ticket.id) }}" class="btn btn-sm btn-warning" title="Edit Ticket">
+          <i class="bi bi-pencil"></i>
+        </a>
+        <form method="POST" action="{{ url_for('main.eliminar_ticket', id=ticket.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this ticket?');">
+          <button type="submit" class="btn btn-sm btn-danger" title="Delete Ticket">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+        {% else %}
+        <span class="text-muted"><i class="bi bi-lock"></i></span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if current_user.role.name == 'User' %}
+<p class="text-center text-muted fst-italic">
+  You do not have permission to create, update, or delete tickets.
+</p>
+{% endif %}
+{% endblock %}

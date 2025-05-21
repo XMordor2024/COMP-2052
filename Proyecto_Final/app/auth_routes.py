@@ -40,6 +40,8 @@ def register():
         # Buscar el rol por nombre (por default "User")
         role = Role.query.filter_by(name='User').first()
         if not role:
+            db.session.add(user)
+            db.session.commit()
             flash('Role seleccionado es inválido.')
             return redirect(url_for('auth.register'))
 
